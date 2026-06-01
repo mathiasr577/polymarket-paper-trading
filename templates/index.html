@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polymarket Paper Trading</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0d1117; color: #e6edf3; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+h1 { color: #00ff88; font-size: 24px; margin-bottom: 20px; }
+.stats { display: flex; gap: 16px; margin-bottom: 30px; flex-wrap: wrap; }
+.stat { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px 24px; min-width: 140px; }
+.stat .label { font-size: 11px; color: #8b949e; text-transform: uppercase; margin-bottom: 6px; }
+.stat .value { font-size: 24px; font-weight: bold; }
+.green { color: #00ff88; }
+.red { color: #ff4444; }
+.white { color: #e6edf3; }
+table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 8px; overflow: hidden; }
+th { background: #21262d; padding: 12px 16px; text-align: left; font-size: 12px; color: #8b949e; text-transform: uppercase; }
+td { padding: 12px 16px; border-top: 1px solid #21262d; font-size: 13px; }
+.badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+.yes { background: #1a4731; color: #00ff88; }
+.no { background: #4a1515; color: #ff4444; }
+h2 { margin: 30px 0 16px; color: #8b949e; font-size: 16px; }
+</style>
+</head>
+<body>
+<h1>🟢 Polymarket Paper Trading</h1>
+<div class="stats" id="stats"></div>
+<h2>POSICIONES ABIERTAS</h2>
+<table>
+<thead><tr><th>Mercado</th><th>Side</th><th>Wallet</th><th>Entry</th><th>Current</th><th>Bet</th><th>PNL</th></tr></thead>
+<tbody id="open-body"></tbody>
+</table>
+<h2>POSICIONES CERRADAS</h2>
+<table>
+<thead><tr><th>Mercado</th><th>Side</th><th>Wallet</th><th>Entry</th><th>Close</th><th>Bet</th><th>PNL</th></tr></thead>
+<tbody id="closed-body"></tbody>
+</table>
+<script>
+async function load() {
+    const r = await fetch('/api/state');
+    const d = await r.json();
+
+    document.getElementById('stats').innerHTML = `
+        <div class="stat"><div class="label">Balance</div><div class="value green">$${d.balance}</div></div>
+        <div class="stat"><div class="label">Total PNL</div><div class="value ${d.total_pnl >= 0 ? 'green' : 'red'}">${d.total_pnl >= 0 ? '+' : ''}$${d.total_pnl}</div></div>
+        <div class="stat"><div class="label">Invertido</div><div class="value white">$${d.total_invested}</div></div>
+        <div class="stat"><div class="label">Abiertas</div><div class="value white">${d.open_positions}</div></div>
+        <div class="stat"><div class="label">Cerradas</div><div class="value white">${d.closed_positions}</div></div>
+    `;
+
+    document.getElementById('open-body').innerHTML = d.positions.map(p => `
+        <tr>
+            <td>${p.market}</td>
+            <td><span class="badge ${p.side === 'YES' ? 'yes' : 'no'}">${p.side}</span></td>
+            <td>${p.wallet_label}</td>
+            <td>$${p.entry_price.toFixed(3)}</td>
+            <td>$${p.current_price.toFixed(3)}</td>
+            <td>$${p.bet_amount.toFixed(2)}</td>
+            <td class="${p.pnl >= 0 ? 'green' : 'red'}">${p.pnl >= 0 ? '+' : ''}$${p.pnl.toFixed(2)}</td>
+        </tr>
+    `).join('');
+
+    document.getElementById('closed-body').innerHTML = d.closed.map(p => `
+        <tr>
+            <td>${p.market}</td>
+            <td><span class="badge ${p.side === 'YES' ? 'yes' : 'no'}">${p.side}</span></td>
+            <td>${p.wallet_label}</td>
+            <td>$${p.entry_price.toFixed(3)}</td>
+            <td>$${(p.close_price || 0).toFixed(3)}</td>
+            <td>$${p.bet_amount.toFixed(2)}</td>
+            <td class="${p.pnl >= 0 ? 'green' : 'red'}">${p.pnl >= 0 ? '+' : ''}$${p.pnl.toFixed(2)}</td>
+        </tr>
+    `).join('');
+}
+
+load();
+setInterval(load, 30000);
+</script>
+</body>
+</html>
