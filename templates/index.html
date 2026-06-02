@@ -29,7 +29,7 @@ td { padding: 10px 14px; border-top: 1px solid #21262d; font-size: 12px; }
 .page.active { display: block; }
 .wallet-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 12px; }
 .wallet-name { font-weight: bold; font-size: 16px; margin-bottom: 16px; color: #e6edf3; }
-.wallet-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+.wallet-stats { display: flex; gap: 16px; flex-wrap: wrap; }
 .ws { text-align: center; background: #0d1117; border-radius: 6px; padding: 10px 16px; min-width: 80px; }
 .ws .wl { font-size: 10px; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; }
 .ws .wv { font-size: 18px; font-weight: bold; }
@@ -87,34 +87,35 @@ async function load() {
   const r = await fetch('/api/state');
   const d = await r.json();
 
-  const openPnl = d.positions.reduce((a, p) => a + p.pnl, 0);
-  const totalPnl = d.total_pnl + openPnl;
-  const wins = d.closed_positions.filter(p => p.pnl > 0).length;
-  const wr = d.closed_positions.length > 0 ? Math.round(wins / d.closed_positions.length * 100) : 0;
+  const closed = d.closed_positions_list || [];
+  const open = d.positions || [];
+  const openPnl = open.reduce((a, p) => a + p.pnl, 0);
+  const wins = closed.filter(p => p.pnl > 0).length;
+  const wr = closed.length > 0 ? Math.round(wins / closed.length * 100) : 0;
 
   document.getElementById('stats').innerHTML = `
     <div class="stat"><div class="label">Balance</div><div class="value green">$${d.balance}</div></div>
-    <div class="stat"><div class="label">Total PNL</div><div class="value ${pc(totalPnl)}">${ps(totalPnl)}</div></div>
+    <div class="stat"><div class="label">Total PNL</div><div class="value ${pc(d.total_pnl)}">${ps(d.total_pnl)}</div></div>
     <div class="stat"><div class="label">Invertido</div><div class="value gray">$${d.total_invested}</div></div>
-    <div class="stat"><div class="label">Abiertas</div><div class="value gray">${d.open_positions}</div></div>
-    <div class="stat"><div class="label">Cerradas</div><div class="value gray">${d.closed_positions}</div></div>
+    <div class="stat"><div class="label">Abiertas</div><div class="value gray">${open.length}</div></div>
+    <div class="stat"><div class="label">Cerradas</div><div class="value gray">${closed.length}</div></div>
     <div class="stat"><div class="label">Win Rate</div><div class="value ${wr >= 50 ? 'green' : 'red'}">${wr}%</div></div>
   `;
 
-  const recientes = [...d.positions].slice(-10).reverse();
+  const recientes = [...open].slice(-10).reverse();
   document.getElementById('recent-body').innerHTML = recientes.map(p => `
     <tr><td>${p.market}</td><td>${badge(p.side)}</td><td>${p.wallet_label}</td>
     <td>$${p.entry_price.toFixed(3)}</td><td>$${p.current_price.toFixed(3)}</td>
     <td>$${p.bet_amount.toFixed(2)}</td><td class="${pc(p.pnl)}">${ps(p.pnl)}</td></tr>
   `).join('');
 
-  document.getElementById('open-body').innerHTML = d.positions.map(p => `
+  document.getElementById('open-body').innerHTML = open.map(p => `
     <tr><td>${p.market}</td><td>${badge(p.side)}</td><td>${p.wallet_label}</td>
     <td>$${p.entry_price.toFixed(3)}</td><td>$${p.current_price.toFixed(3)}</td>
     <td>$${p.bet_amount.toFixed(2)}</td><td class="${pc(p.pnl)}">${ps(p.pnl)}</td></tr>
   `).join('');
 
-  document.getElementById('closed-body').innerHTML = [...d.closed_positions].reverse().map(p => `
+  document.getElementById('closed-body').innerHTML = [...closed].reverse().map(p => `
     <tr><td>${p.market}</td><td>${badge(p.side)}</td><td>${p.wallet_label}</td>
     <td>$${p.entry_price.toFixed(3)}</td><td>$${(p.close_price||0).toFixed(3)}</td>
     <td>$${p.bet_amount.toFixed(2)}</td><td class="${pc(p.pnl)}">${ps(p.pnl)}</td></tr>
@@ -122,36 +123,37 @@ async function load() {
 
   // Wallets
   const walletMap = {};
-  d.positions.forEach(p => {
-    if (!walletMap[p.wallet_label]) walletMap[p.wallet_label] = { open: [], closed: [] };
-    walletMap[p.wallet_label].open.push(p);
+  open.forEach(p => {
+    const k = p.wallet_label || p.wallet;
+    if (!walletMap[k]) walletMap[k] = { open: [], closed: [] };
+    walletMap[k].open.push(p);
   });
-  d.closed_positions.forEach(p => {
-    if (!walletMap[p.wallet_label]) walletMap[p.wallet_label] = { open: [], closed: [] };
-    walletMap[p.wallet_label].closed.push(p);
+  closed.forEach(p => {
+    const k = p.wallet_label || p.wallet;
+    if (!walletMap[k]) walletMap[k] = { open: [], closed: [] };
+    walletMap[k].closed.push(p);
   });
 
   document.getElementById('wallet-cards').innerHTML = Object.entries(walletMap)
     .sort((a, b) => {
-      const pnlA = [...a[1].open, ...a[1].closed].reduce((s, p) => s + p.pnl, 0);
-      const pnlB = [...b[1].open, ...b[1].closed].reduce((s, p) => s + p.pnl, 0);
-      return pnlB - pnlA;
+      const pA = [...a[1].open, ...a[1].closed].reduce((s, p) => s + p.pnl, 0);
+      const pB = [...b[1].open, ...b[1].closed].reduce((s, p) => s + p.pnl, 0);
+      return pB - pA;
     })
     .map(([name, data]) => {
       const allPnl = [...data.open, ...data.closed].reduce((s, p) => s + p.pnl, 0);
-      const wins = data.closed.filter(p => p.pnl > 0).length;
-      const wr = data.closed.length > 0 ? Math.round(wins / data.closed.length * 100) : 0;
-      const total = data.open.length + data.closed.length;
+      const w = data.closed.filter(p => p.pnl > 0).length;
+      const wr = data.closed.length > 0 ? Math.round(w / data.closed.length * 100) : 0;
       return `
         <div class="wallet-card">
           <div class="wallet-name">${name}</div>
           <div class="wallet-stats">
             <div class="ws"><div class="wl">PNL</div><div class="wv ${pc(allPnl)}">${ps(allPnl)}</div></div>
             <div class="ws"><div class="wl">Win Rate</div><div class="wv ${wr >= 50 ? 'green' : 'red'}">${wr}%</div></div>
-            <div class="ws"><div class="wl">Total Trades</div><div class="wv gray">${total}</div></div>
+            <div class="ws"><div class="wl">Trades</div><div class="wv gray">${data.open.length + data.closed.length}</div></div>
             <div class="ws"><div class="wl">Abiertas</div><div class="wv gray">${data.open.length}</div></div>
             <div class="ws"><div class="wl">Cerradas</div><div class="wv gray">${data.closed.length}</div></div>
-            <div class="ws"><div class="wl">Wins</div><div class="wv green">${wins}</div></div>
+            <div class="ws"><div class="wl">Wins</div><div class="wv green">${w}</div></div>
           </div>
         </div>`;
     }).join('');
