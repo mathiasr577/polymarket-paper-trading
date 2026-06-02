@@ -34,7 +34,7 @@ def get_state():
         "open_positions": len(state["positions"]),
         "closed_positions": len(state["closed_positions"]),
         "positions": state["positions"],
-        "closed": state["closed_positions"]
+        "closed_positions_list": state["closed_positions"]
     })
 
 if __name__ == '__main__':
