@@ -27,27 +27,26 @@ td { padding: 10px 14px; border-top: 1px solid #21262d; font-size: 12px; }
 .other { background: #1a2a4a; color: #58a6ff; }
 .page { display: none; }
 .page.active { display: block; }
-.wallet-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-.wallet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.wallet-name { font-weight: bold; font-size: 14px; }
-.wallet-stats { display: flex; gap: 16px; }
-.ws { text-align: center; }
-.ws .wl { font-size: 10px; color: #8b949e; }
-.ws .wv { font-size: 16px; font-weight: bold; }
+.wallet-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+.wallet-name { font-weight: bold; font-size: 16px; margin-bottom: 16px; color: #e6edf3; }
+.wallet-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+.ws { text-align: center; background: #0d1117; border-radius: 6px; padding: 10px 16px; min-width: 80px; }
+.ws .wl { font-size: 10px; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; }
+.ws .wv { font-size: 18px; font-weight: bold; }
 </style>
 </head>
 <body>
 <h1>🟢 Polymarket Paper Trading</h1>
 <div class="tabs">
-  <div class="tab active" onclick="showPage('dashboard')">Dashboard</div>
-  <div class="tab" onclick="showPage('wallets')">Wallets</div>
-  <div class="tab" onclick="showPage('abiertas')">Abiertas</div>
-  <div class="tab" onclick="showPage('cerradas')">Cerradas</div>
+  <div class="tab active" onclick="showPage('dashboard', this)">Dashboard</div>
+  <div class="tab" onclick="showPage('wallets', this)">Wallets</div>
+  <div class="tab" onclick="showPage('abiertas', this)">Abiertas</div>
+  <div class="tab" onclick="showPage('cerradas', this)">Cerradas</div>
 </div>
 
 <div id="dashboard" class="page active">
   <div class="stats" id="stats"></div>
-  <h2 style="color:#8b949e;font-size:14px;margin-bottom:12px">ÚLTIMAS POSICIONES ABIERTAS</h2>
+  <h2 style="color:#8b949e;font-size:13px;margin-bottom:12px;text-transform:uppercase">Últimas posiciones abiertas</h2>
   <table><thead><tr><th>Mercado</th><th>Side</th><th>Wallet</th><th>Entry</th><th>Current</th><th>Bet</th><th>PNL</th></tr></thead>
   <tbody id="recent-body"></tbody></table>
 </div>
@@ -67,22 +66,22 @@ td { padding: 10px 14px; border-top: 1px solid #21262d; font-size: 12px; }
 </div>
 
 <script>
-function showPage(name) {
+function showPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(name).classList.add('active');
-  event.target.classList.add('active');
+  el.classList.add('active');
 }
 
 function badge(side) {
-  const s = side.toUpperCase();
+  const s = (side || '').toUpperCase();
   if (s === 'YES') return `<span class="badge yes">YES</span>`;
   if (s === 'NO') return `<span class="badge no">NO</span>`;
   return `<span class="badge other">${side}</span>`;
 }
 
-function pnlClass(v) { return v >= 0 ? 'green' : 'red'; }
-function pnlStr(v) { return (v >= 0 ? '+' : '') + '$' + v.toFixed(2); }
+function pc(v) { return v >= 0 ? 'green' : 'red'; }
+function ps(v) { return (v >= 0 ? '+' : '') + '$' + v.toFixed(2); }
 
 async function load() {
   const r = await fetch('/api/state');
@@ -90,64 +89,72 @@ async function load() {
 
   const openPnl = d.positions.reduce((a, p) => a + p.pnl, 0);
   const totalPnl = d.total_pnl + openPnl;
-  const winRate = d.closed > 0 ? Math.round((d.closed_positions.filter(p => p.pnl > 0).length / d.closed_positions.length) * 100) : 0;
+  const wins = d.closed_positions.filter(p => p.pnl > 0).length;
+  const wr = d.closed_positions.length > 0 ? Math.round(wins / d.closed_positions.length * 100) : 0;
 
   document.getElementById('stats').innerHTML = `
     <div class="stat"><div class="label">Balance</div><div class="value green">$${d.balance}</div></div>
-    <div class="stat"><div class="label">Total PNL</div><div class="value ${pnlClass(totalPnl)}">${pnlStr(totalPnl)}</div></div>
+    <div class="stat"><div class="label">Total PNL</div><div class="value ${pc(totalPnl)}">${ps(totalPnl)}</div></div>
     <div class="stat"><div class="label">Invertido</div><div class="value gray">$${d.total_invested}</div></div>
     <div class="stat"><div class="label">Abiertas</div><div class="value gray">${d.open_positions}</div></div>
     <div class="stat"><div class="label">Cerradas</div><div class="value gray">${d.closed_positions}</div></div>
-    <div class="stat"><div class="label">Win Rate</div><div class="value ${winRate >= 50 ? 'green' : 'red'}">${winRate}%</div></div>
+    <div class="stat"><div class="label">Win Rate</div><div class="value ${wr >= 50 ? 'green' : 'red'}">${wr}%</div></div>
   `;
 
-  // Recientes
   const recientes = [...d.positions].slice(-10).reverse();
   document.getElementById('recent-body').innerHTML = recientes.map(p => `
     <tr><td>${p.market}</td><td>${badge(p.side)}</td><td>${p.wallet_label}</td>
     <td>$${p.entry_price.toFixed(3)}</td><td>$${p.current_price.toFixed(3)}</td>
-    <td>$${p.bet_amount.toFixed(2)}</td><td class="${pnlClass(p.pnl)}">${pnlStr(p.pnl)}</td></tr>
+    <td>$${p.bet_amount.toFixed(2)}</td><td class="${pc(p.pnl)}">${ps(p.pnl)}</td></tr>
   `).join('');
 
-  // Abiertas
   document.getElementById('open-body').innerHTML = d.positions.map(p => `
     <tr><td>${p.market}</td><td>${badge(p.side)}</td><td>${p.wallet_label}</td>
     <td>$${p.entry_price.toFixed(3)}</td><td>$${p.current_price.toFixed(3)}</td>
-    <td>$${p.bet_amount.toFixed(2)}</td><td class="${pnlClass(p.pnl)}">${pnlStr(p.pnl)}</td></tr>
+    <td>$${p.bet_amount.toFixed(2)}</td><td class="${pc(p.pnl)}">${ps(p.pnl)}</td></tr>
   `).join('');
 
-  // Cerradas
   document.getElementById('closed-body').innerHTML = [...d.closed_positions].reverse().map(p => `
     <tr><td>${p.market}</td><td>${badge(p.side)}</td><td>${p.wallet_label}</td>
     <td>$${p.entry_price.toFixed(3)}</td><td>$${(p.close_price||0).toFixed(3)}</td>
-    <td>$${p.bet_amount.toFixed(2)}</td><td class="${pnlClass(p.pnl)}">${pnlStr(p.pnl)}</td></tr>
+    <td>$${p.bet_amount.toFixed(2)}</td><td class="${pc(p.pnl)}">${ps(p.pnl)}</td></tr>
   `).join('');
 
   // Wallets
   const walletMap = {};
-  [...d.positions, ...d.closed_positions].forEach(p => {
+  d.positions.forEach(p => {
     if (!walletMap[p.wallet_label]) walletMap[p.wallet_label] = { open: [], closed: [] };
-    if (p.status === 'closed') walletMap[p.wallet_label].closed.push(p);
-    else walletMap[p.wallet_label].open.push(p);
+    walletMap[p.wallet_label].open.push(p);
+  });
+  d.closed_positions.forEach(p => {
+    if (!walletMap[p.wallet_label]) walletMap[p.wallet_label] = { open: [], closed: [] };
+    walletMap[p.wallet_label].closed.push(p);
   });
 
-  document.getElementById('wallet-cards').innerHTML = Object.entries(walletMap).map(([name, data]) => {
-    const allPnl = [...data.open, ...data.closed].reduce((a, p) => a + p.pnl, 0);
-    const wins = data.closed.filter(p => p.pnl > 0).length;
-    const wr = data.closed.length > 0 ? Math.round(wins / data.closed.length * 100) : 0;
-    return `
-      <div class="wallet-card">
-        <div class="wallet-header">
+  document.getElementById('wallet-cards').innerHTML = Object.entries(walletMap)
+    .sort((a, b) => {
+      const pnlA = [...a[1].open, ...a[1].closed].reduce((s, p) => s + p.pnl, 0);
+      const pnlB = [...b[1].open, ...b[1].closed].reduce((s, p) => s + p.pnl, 0);
+      return pnlB - pnlA;
+    })
+    .map(([name, data]) => {
+      const allPnl = [...data.open, ...data.closed].reduce((s, p) => s + p.pnl, 0);
+      const wins = data.closed.filter(p => p.pnl > 0).length;
+      const wr = data.closed.length > 0 ? Math.round(wins / data.closed.length * 100) : 0;
+      const total = data.open.length + data.closed.length;
+      return `
+        <div class="wallet-card">
           <div class="wallet-name">${name}</div>
           <div class="wallet-stats">
-            <div class="ws"><div class="wl">PNL</div><div class="wv ${pnlClass(allPnl)}">${pnlStr(allPnl)}</div></div>
+            <div class="ws"><div class="wl">PNL</div><div class="wv ${pc(allPnl)}">${ps(allPnl)}</div></div>
             <div class="ws"><div class="wl">Win Rate</div><div class="wv ${wr >= 50 ? 'green' : 'red'}">${wr}%</div></div>
+            <div class="ws"><div class="wl">Total Trades</div><div class="wv gray">${total}</div></div>
             <div class="ws"><div class="wl">Abiertas</div><div class="wv gray">${data.open.length}</div></div>
             <div class="ws"><div class="wl">Cerradas</div><div class="wv gray">${data.closed.length}</div></div>
+            <div class="ws"><div class="wl">Wins</div><div class="wv green">${wins}</div></div>
           </div>
-        </div>
-      </div>`;
-  }).join('');
+        </div>`;
+    }).join('');
 }
 
 load();
