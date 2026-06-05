@@ -6,7 +6,7 @@ from tracker import update_positions
 app = Flask(__name__)
 
 state = {
-    "balance": 150.0,
+    "balance": 1000.0,
     "total_invested": 0.0,
     "total_pnl": 0.0,
     "positions": [],
