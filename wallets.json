@@ -1,5 +1,10 @@
 [
     {
+        "address": "0xa5ea13a81d2b7e8e424b182bdc1db08e756bd96a",
+        "category": "sports",
+        "note": "bossoskil1 - sports"
+    },
+    {
         "address": "0x204f72f35326db932158cba6adff0b9a1da95e14",
         "category": "sports",
         "note": "swisstony - #4 mensual"
@@ -48,5 +53,25 @@
         "address": "0xbee54d90051720e27921dc6874f02d646ffca636",
         "category": "sports",
         "note": "downtownfee - #3 mensual sports"
+    },
+    {
+        "address": "0x3d6ac5150675a83e2090234414222e968888c2b5",
+        "category": "sports",
+        "note": "brightshieldd - tennis specialist Roland Garros"
+    },
+    {
+        "address": "0x4bff30af91642dc7d2b19a8664378fe55c45fc26",
+        "category": "sports",
+        "note": "Sassy-Bucket - baseball + MMA specialist"
+    },
+    {
+        "address": "0x03e8a544e97eeff5753bc1e90d46e5ef22af1697",
+        "category": "sports",
+        "note": "weflyhigh - #4 biggest wins weekly"
+    },
+    {
+        "address": "0x5268527977f700f9bf9b6d5cd843859e4e70135d",
+        "category": "sports",
+        "note": "HomeRunHazard - 77% eficiencia weekly"
     }
 ]
