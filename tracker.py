@@ -5,6 +5,8 @@ DATA_API = "https://data-api.polymarket.com"
 CLOB_HOST = "https://clob.polymarket.com"
 HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
+BET_AMOUNT = 20.0
+
 def load_snapshot():
     try:
         with open("snapshot.json") as f:
@@ -73,12 +75,8 @@ def update_positions(state):
                 continue
 
             if size > 0 and avg_price > 0:
-                bet_amount = state["balance"] * 0.05
-                if bet_amount < 1:
-                    continue
-
-                shares = bet_amount / avg_price
-                print(f"NUEVA: {title} | {outcome} | ${bet_amount:.2f}")
+                shares = BET_AMOUNT / avg_price
+                print(f"NUEVA: {title} | {outcome} | ${BET_AMOUNT}")
 
                 new_pos = {
                     "wallet": address,
@@ -89,14 +87,13 @@ def update_positions(state):
                     "side": outcome,
                     "entry_price": avg_price,
                     "current_price": avg_price,
-                    "bet_amount": bet_amount,
+                    "bet_amount": BET_AMOUNT,
                     "shares": shares,
                     "pnl": 0.0,
                     "status": "open"
                 }
                 state["positions"].append(new_pos)
-                state["balance"] -= bet_amount
-                state["total_invested"] += bet_amount
+                state["total_invested"] += BET_AMOUNT
 
         for pos in list(state["positions"]):
             if pos["wallet"] == address and pos["condition_id"] not in current_ids and pos["status"] == "open":
@@ -105,7 +102,6 @@ def update_positions(state):
                 pos["pnl"] = pnl
                 pos["status"] = "closed"
                 pos["close_price"] = current_price
-                state["balance"] += pos["bet_amount"] + pnl
                 state["total_pnl"] += pnl
                 state["closed_positions"].append(pos)
                 state["positions"].remove(pos)
