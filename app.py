@@ -17,7 +17,7 @@ def job():
     update_positions(state)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(job, 'interval', seconds=30)
+scheduler.add_job(job, 'interval', seconds=60, max_instances=2)
 scheduler.start()
 
 @app.route('/')
