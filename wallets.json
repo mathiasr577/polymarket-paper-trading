@@ -128,5 +128,10 @@
         "address": "0xaa075924e1dc7cff3b9fab67401126338c4d2125",
         "category": "sports",
         "note": "rustin - +$92K weekly NHL specialist"
+    },
+    {
+        "address": "0x2c335066fe58fe9237c3d3dc7b275c2a034a0563",
+        "category": "general",
+        "note": "0x2c335066 - $973K hoy, general sports+soccer+esports"
     }
 ]
