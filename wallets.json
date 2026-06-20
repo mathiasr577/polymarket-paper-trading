@@ -1,28 +1,8 @@
 [
     {
-        "address": "0xa5ea13a81d2b7e8e424b182bdc1db08e756bd96a",
-        "category": "sports",
-        "note": "bossoskil1 - sports"
-    },
-    {
         "address": "0x204f72f35326db932158cba6adff0b9a1da95e14",
         "category": "sports",
         "note": "swisstony - #4 mensual"
-    },
-    {
-        "address": "0xde7be6d489bce070a959e0cb813128ae659b5f4b",
-        "category": "sports",
-        "note": "wan123 - #8 mensual"
-    },
-    {
-        "address": "0xa380c504a480f591c7dfbf9944fac3994b9b21ff",
-        "category": "general",
-        "note": "JewishNinja - #12 mensual"
-    },
-    {
-        "address": "0xfbf3d501e88815464642d0e913f15379c3eeb218",
-        "category": "sports",
-        "note": "VPenguin - #8 mensual"
     },
     {
         "address": "0xfe787d2da716d60e8acff57fb87eb13cd4d10319",
@@ -35,36 +15,6 @@
         "note": "influenz.eth - #1 finanzas"
     },
     {
-        "address": "0xbd0477e08d82d35a855ff19644a88a9213d8fbb0",
-        "category": "politics",
-        "note": "yuhyuhyuhy - #2 menciones"
-    },
-    {
-        "address": "0xf8831548531d56ad6a4331493243c447a827cd1f",
-        "category": "sports",
-        "note": "Inaccuratestake - #1 mensual sports"
-    },
-    {
-        "address": "0xb91aeb5accc33a5f9a8615b8ed6b2d352e913987",
-        "category": "sports",
-        "note": "afghi2421 - #2 mensual sports"
-    },
-    {
-        "address": "0xbee54d90051720e27921dc6874f02d646ffca636",
-        "category": "sports",
-        "note": "downtownfee - #3 mensual sports"
-    },
-    {
-        "address": "0x3d6ac5150675a83e2090234414222e968888c2b5",
-        "category": "sports",
-        "note": "brightshieldd - tennis specialist Roland Garros"
-    },
-    {
-        "address": "0x4bff30af91642dc7d2b19a8664378fe55c45fc26",
-        "category": "sports",
-        "note": "Sassy-Bucket - baseball + MMA specialist"
-    },
-    {
         "address": "0x03e8a544e97eeff5753bc1e90d46e5ef22af1697",
         "category": "sports",
         "note": "weflyhigh - #4 biggest wins weekly"
@@ -75,49 +25,14 @@
         "note": "Latina - baseball specialist #2 today"
     },
     {
-        "address": "0xe015b5a2a299167be835a2fd1e86f09c49e06ffd",
-        "category": "esports",
-        "note": "TAIWANNUMBERONE - LoL specialist #3 today"
-    },
-    {
-        "address": "0x528635df9791d3dcebf9b82ad4b83e8570440d47",
-        "category": "esports",
-        "note": "verifly - LoL specialist #6 today"
-    },
-    {
         "address": "0xe5b70fd855af9258d9463992e4f1ed7987905ee3",
         "category": "sports",
         "note": "alwaysfade - +$267K weekly NBA specialist"
     },
     {
-        "address": "0xc8ec6d4cef5c5fe8409ef69303c37f05b678e8f1",
-        "category": "sports",
-        "note": "Hugewinner - +$125K weekly NBA specialist"
-    },
-    {
-        "address": "0x9f2fe025f84839ca81dd8e0338892605702d2ca8",
-        "category": "sports",
-        "note": "surfandturf - $794K biggest win NBA+UFC"
-    },
-    {
-        "address": "0xd6966eb1ae7b52320ba7ab1016680198c9e08a49",
-        "category": "sports",
-        "note": "Elf - +$116K weekly sports diversificado"
-    },
-    {
-        "address": "0x84dbb7103982e3617704a2ed7d5b39691952aeeb",
-        "category": "sports",
-        "note": "Soarin22 - +$148K weekly NBA specialist"
-    },
-    {
-        "address": "0xdb27bf2ac5d428a9c63dbc914611036855a6c56e",
-        "category": "sports",
-        "note": "DrPufferfish - $1.3M biggest win NBA specialist"
-    },
-    {
-        "address": "0xde7cdcab3e0c5b0e8315da358e80c7d80a12c933",
-        "category": "sports",
-        "note": "thebug44 - 73 predictions ultra selectivo NBA"
+        "address": "0xe015b5a2a299167be835a2fd1e86f09c49e06ffd",
+        "category": "esports",
+        "note": "TAIWANNUMBERONE - LoL specialist #3 today"
     },
     {
         "address": "0xa41cb0ef63d0ae1df955cfb2f111c79c6e3afade",
@@ -125,13 +40,53 @@
         "note": "endxd - +$49K weekly NBA specialist"
     },
     {
+        "address": "0x84dbb7103982e3617704a2ed7d5b39691952aeeb",
+        "category": "sports",
+        "note": "Soarin22 - +$148K weekly NBA specialist"
+    },
+    {
+        "address": "0xde7cdcab3e0c5b0e8315da358e80c7d80a12c933",
+        "category": "sports",
+        "note": "thebug44 - 73 predictions ultra selectivo NBA"
+    },
+    {
+        "address": "0xdb27bf2ac5d428a9c63dbc914611036855a6c56e",
+        "category": "sports",
+        "note": "DrPufferfish - $1.3M biggest win NBA specialist"
+    },
+    {
+        "address": "0xc8ec6d4cef5c5fe8409ef69303c37f05b678e8f1",
+        "category": "sports",
+        "note": "Hugewinner - +$125K weekly NBA specialist"
+    },
+    {
         "address": "0xaa075924e1dc7cff3b9fab67401126338c4d2125",
         "category": "sports",
         "note": "rustin - +$92K weekly NHL specialist"
     },
     {
-        "address": "0x2c335066fe58fe9237c3d3dc7b275c2a034a0563",
+        "address": "0xb91aeb5accc33a5f9a8615b8ed6b2d352e913987",
+        "category": "sports",
+        "note": "afghi2421 - #2 mensual sports"
+    },
+    {
+        "address": "0x4761ecf3578e388a9b16c43f874efe32ee855ae8",
+        "category": "sports",
+        "note": "Grenderen - new"
+    },
+    {
+        "address": "0x4bff30af91642dc7d2b19a8664378fe55c45fc26",
+        "category": "sports",
+        "note": "Sassy-Bucket - baseball + MMA specialist"
+    },
+    {
+        "address": "0xde7be6d489bce070a959e0cb813128ae659b5f4b",
+        "category": "sports",
+        "note": "wan123 - #8 mensual"
+    },
+    {
+        "address": "0x89dd49bf87c41be422927372a0b75c6ab577f662",
         "category": "general",
-        "note": "0x2c335066 - $973K hoy, general sports+soccer+esports"
+        "note": "0x8139E8F571eb4372 - new"
     }
 ]
